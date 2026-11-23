@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abel Dagnew - Wikibidia, the free encyclopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Linux Libertine"', '"Georgia"', '"Libre Baskerville"', 'Times', 'serif'],
+                        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Authentic Wikipedia styling & CSS variables for instant Light/Dark transitions */
+        :root {
+            --bg-page: #ffffff;
+            --bg-subtle: #f8f9fa;
+            --bg-infobox: #f8f9fa;
+            --bg-infobox-header: #eaecf0;
+            --bg-hover: #eaecf0;
+            --text-primary: #202122;
+            --text-muted: #54595d;
+            --border-color: #a2a9b1;
+            --border-subtle: #eaecf0;
+            --link-color: #3366cc;
+            --link-visited: #795cb2;
+            --link-hover: #447ff5;
+            --highlight-bg: #fef08a;
+        }
+
+        html.dark {
+            --bg-page: #101418;
+            --bg-subtle: #181d23;
+            --bg-infobox: #161b22;
+            --bg-infobox-header: #212832;
+            --bg-hover: #242b35;
+            --text-primary: #eaecf0;
+            --text-muted: #a2a9b1;
+            --border-color: #40464e;
+            --border-subtle: #272d35;
+            --link-color: #6b9eff;
+            --link-visited: #a78bfa;
+            --link-hover: #93b8ff;
+            --highlight-bg: #854d0e;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .wiki-heading {
+            font-family: "Linux Libertine", "Georgia", "Libre Baskerville", Times, serif;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            line-height: 1.3;
+        }
+
+        .wiki-sub-heading {
+            font-family: "Linux Libertine", "Georgia", "Libre Baskerville", Times, serif;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .wiki-link {
+            color: var(--link-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .wiki-link:hover {
+            text-decoration: underline;
+            color: var(--link-hover);
+        }
+
+        .wiki-border {
+            border-color: var(--border-color);
+        }
+
+        .wiki-border-subtle {
+            border-color: var(--border-subtle);
+        }
+
+        .wiki-bg-subtle {
+            background-color: var(--bg-subtle);
+        }
+
+        .wiki-infobox {
+            background-color: var(--bg-infobox);
+            border: 1px solid var(--border-color);
+        }
+
+        .wiki-infobox-header {
+            background-color: var(--bg-infobox-header);
+        }
+
+        /* Custom Tooltip Styling */
+        .ref-sup {
+            font-size: 0.75em;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+            top: -0.5em;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Search highlight */
+        mark.search-match {
+            background-color: var(--highlight-bg);
+            color: inherit;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="antialiased text-[14.5px] selection:bg-blue-500/20">
+
+    <!-- Top Vector 2022 Header -->
+    <header class="sticky top-0 z-40 border-b wiki-border-subtle backdrop-blur-md bg-[var(--bg-page)]/95">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
+            
+            <!-- Left: Menu Button & Wikibidia Logo -->
+            <div class="flex items-center gap-3 shrink-0">
+                <button id="mobile-toc-btn" aria-label="Toggle Table of Contents" class="lg:hidden p-2 rounded hover:bg-[var(--bg-hover)] transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                
+                <a href="#" class="flex items-center gap-2.5 group">
+                    <!-- Custom Wikibidia Globe SVG -->
+                    <div class="w-9 h-9 rounded-full border wiki-border flex items-center justify-center wiki-bg-subtle shadow-xs group-hover:scale-105 transition-transform">
+                        <span class="font-serif font-bold text-lg tracking-tighter">W</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-serif text-lg sm:text-xl font-bold tracking-tight leading-none">WIKIBIDIA</span>
+                        <span class="text-[10px] sm:text-[11px] text-[var(--text-muted)] tracking-wide leading-tight">The Free Encyclopedia</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Interactive Search Bar -->
+            <div class="flex-1 max-w-md mx-2 relative">
+                <div class="relative flex items-center">
+                    <svg class="w-4 h-4 absolute left-3 text-[var(--text-muted)] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="wiki-search" 
+                        placeholder="Search article (e.g., MatricPrep, Deovictori, Forex)..." 
+                        class="w-full pl-9 pr-16 py-1.5 text-sm rounded border wiki-border bg-[var(--bg-page)] focus:outline-none focus:ring-2 focus:ring-[#3366cc] transition-all"
+                    >
+                    <button id="clear-search" class="hidden absolute right-2 text-xs px-1.5 py-0.5 rounded bg-[var(--bg-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                        Clear
+                    </button>
+                </div>
+                <!-- Live Search Results Dropdown -->
+                <div id="search-results" class="hidden absolute left-0 right-0 mt-1 rounded border wiki-border bg-[var(--bg-page)] shadow-lg max-h-64 overflow-y-auto z-50 text-xs"></div>
+            </div>
+
+            <!-- Right: Tools & Theme Toggle -->
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Dynamic Age Badge -->
+                <span id="live-age-pill" class="hidden md:inline-flex items-center px-2.5 py-1 rounded text-xs font-medium wiki-bg-subtle border wiki-border-subtle text-[var(--text-muted)]" title="Calculated automatically from Nov 25, 2009">
+                    Age 16
+                </span>
+
+                <!-- Theme Toggle Button -->
+                <button 
+                    id="theme-toggle" 
+                    class="flex items-center gap-1.5 px-2.5 py-1.5 rounded border wiki-border wiki-bg-subtle hover:bg-[var(--bg-hover)] text-xs font-medium transition-colors"
+                    title="Switch between Classic Light Mode and Dark Mode"
+                >
+                    <span id="theme-icon">??</span>
+                    <span id="theme-label" class="hidden sm:inline">Dark Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Table of Contents Drawer -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden lg:hidden">
+        <div id="mobile-drawer-backdrop" class="fixed inset-0 bg-black/50 backdrop-blur-xs"></div>
+        <aside class="relative w-72 max-w-[80vw] h-full bg-[var(--bg-page)] border-r wiki-border p-5 overflow-y-auto shadow-xl">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b wiki-border-subtle">
+                <span class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)]">Contents</span>
+                <button id="close-mobile-drawer" class="p-1 rounded hover:bg-[var(--bg-hover)]">?</button>
+            </div>
+            <nav id="mobile-toc-list" class="space-y-2 text-sm"></nav>
+        </aside>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-8">
+        
+        <!-- Left Sticky Sidebar: Vector 2022 Table of Contents -->
+        <aside class="hidden lg:block">
+            <div class="sticky top-20 pr-3">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b wiki-border-subtle">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Contents</h2>
+                    <button id="toc-collapse-all" class="text-[11px] wiki-link">hide</button>
+                </div>
+                <nav id="desktop-toc-list" class="space-y-1.5 text-[13px]">
+                    <a href="#top" class="block py-0.5 font-semibold text-[var(--text-primary)] hover:underline">(Top)</a>
+                    <a href="#early-life" class="block py-0.5 wiki-link">1 Early life and education</a>
+                    <a href="#tech-dev" class="block py-0.5 wiki-link">2 Technology and web development</a>
+                    <a href="#trading-ventures" class="block py-0.5 wiki-link">3 Trading and digital ventures</a>
+                    <a href="#fashion-design" class="block py-0.5 wiki-link">4 Fashion, design, and aesthetics</a>
+                    <a href="#references" class="block py-0.5 wiki-link">5 References & external links</a>
+                </nav>
+
+                <!-- Appearance Quick Panel (Authentic Vector 2022 Feature) -->
+                <div class="mt-8 pt-4 border-t wiki-border-subtle">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2.5">Appearance</h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="text-[var(--text-muted)] font-medium">Text size</div>
+                        <div class="flex gap-1.5">
+                            <button onclick="setFontSize('13.5px')" class="px-2 py-1 rounded border wiki-border-subtle hover:bg-[var(--bg-hover)]">Small</button>
+                            <button onclick="setFontSize('14.5px')" class="px-2 py-1 rounded border wiki-border-subtle hover:bg-[var(--bg-hover)] font-semibold">Standard</button>
+                            <button onclick="setFontSize('16px')" class="px-2 py-1 rounded border wiki-border-subtle hover:bg-[var(--bg-hover)]">Large</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center + Right Content Column -->
+        <main id="top" class="min-w-0">
+            
+            <!-- Article Title Bar -->
+            <div class="border-b wiki-border pb-1 mb-2 flex flex-wrap items-baseline justify-between gap-2">
+                <h1 id="article-title" class="font-serif text-3xl sm:text-[34px] font-normal tracking-tight">Abel Dagnew</h1>
+                <div class="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border wiki-border-subtle wiki-bg-subtle" title="Verified biographical entry">
+                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Semi-protected</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Wikipedia Tabs Bar (Article / Talk | Read / Edit / View history) -->
+            <div class="flex flex-wrap items-center justify-between border-b wiki-border-subtle text-xs mb-3 gap-2">
+                <div class="flex items-center">
+                    <button id="tab-article" onclick="switchTab('article')" class="px-3 py-2 font-semibold border-b-2 border-[#3366cc] text-[var(--text-primary)]">
+                        Article
+                    </button>
+                    <button id="tab-talk" onclick="switchTab('talk')" class="px-3 py-2 wiki-link hover:bg-[var(--bg-hover)]">
+                        Talk
+                    </button>
+                </div>
+                <div class="flex items-center">
+                    <button id="tab-read" onclick="switchTab('article')" class="px-3 py-2 font-semibold border-b-2 border-[#3366cc] text-[var(--text-primary)]">
+                        Read
+                    </button>
+                    <button id="open-edit-modal" class="px-3 py-2 wiki-link hover:bg-[var(--bg-hover)] flex items-center gap-1 font-medium">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                        <span>Edit</span>
+                    </button>
+                    <button onclick="showToast('Revision history: Last edited on November 23, 2026 by @redp1s')" class="px-3 py-2 wiki-link hover:bg-[var(--bg-hover)] hidden sm:inline">
+                        View history
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tagline -->
+            <div class="text-xs text-[var(--text-muted)] mb-4">
+                From Wikibidia, the free encyclopedia
+            </div>
+
+            <!-- ARTICLE VIEW -->
+            <div id="article-view" class="clearfix">
+                
+                <!-- Hatnote -->
+                <div class="pl-4 italic text-[13px] text-[var(--text-muted)] mb-4">
+                    For the streetwear label founded by Dagnew, see <a href="#fashion-design" class="wiki-link">Deovictori</a>. For the exam preparation platform, see <a href="#tech-dev" class="wiki-link">MatricPrep</a>.
+                </div>
+
+                <!-- Classic Right-Hand Wikipedia Infobox -->
+                <table class="wiki-infobox w-full sm:w-[300px] sm:float-right sm:ml-6 mb-5 text-xs border-collapse rounded-sm overflow-hidden shadow-2xs">
+                    <thead>
+                        <tr>
+                            <th colspan="2" class="wiki-infobox-header py-2 px-3 text-center font-sans text-sm font-bold border-b wiki-border-subtle">
+                                Abel Dagnew
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Emblem / Monogram Box -->
+                        <tr>
+                            <td colspan="2" class="p-3 text-center border-b wiki-border-subtle">
+                                <div class="w-full h-36 rounded border wiki-border-subtle bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center relative overflow-hidden select-none">
+                                    <!-- Subtle metallic grid pattern -->
+                                    <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#a1a1aa 1px, transparent 1px); background-size: 12px 12px;"></div>
+                                    <div class="relative z-10 font-mono tracking-[0.25em] text-xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-300 to-zinc-500">
+                                        @REDP1S
+                                    </div>
+                                    <div class="relative z-10 text-[10px] uppercase tracking-[0.3em] text-zinc-400 mt-1.5">
+                                        ADDIS ABABA • EST. 2009
+                                    </div>
+                                </div>
+                                <div class="text-[11px] text-[var(--text-muted)] mt-1.5">
+                                    Official digital monogram & handle (@redp1s)
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top w-28">Born</th>
+                            <td class="py-1.5 px-2.5 align-top">
+                                November 25, 2009 <span id="infobox-age">(age 16)</span><br>
+                                <a href="#early-life" class="wiki-link">Addis Ababa</a>, Ethiopia
+                            </td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Alias</th>
+                            <td class="py-1.5 px-2.5 align-top font-mono text-[11px]">@redp1s</td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Residence</th>
+                            <td class="py-1.5 px-2.5 align-top">Addis Ababa, Ethiopia</td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Nationality</th>
+                            <td class="py-1.5 px-2.5 align-top">Ethiopian</td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Background</th>
+                            <td class="py-1.5 px-2.5 align-top">Prominent real estate &amp; commercial property family (Ethiopia &amp; international)</td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Education</th>
+                            <td class="py-1.5 px-2.5 align-top">
+                                Green School, Addis Ababa<br>
+                                <span class="text-[var(--text-muted)]">(Social Science Stream, Class of 2027)</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Occupations</th>
+                            <td class="py-1.5 px-2.5 align-top">
+                                <ul class="list-none space-y-0.5">
+                                    <li>Web developer</li>
+                                    <li>Digital brand designer</li>
+                                    <li>Retail financial trader</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="border-b wiki-border-subtle">
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Known for</th>
+                            <td class="py-1.5 px-2.5 align-top">
+                                <a href="#tech-dev" class="wiki-link">MatricPrep</a>, <a href="#trading-ventures" class="wiki-link">Wolf Wallet Street</a>, <a href="#trading-ventures" class="wiki-link">Black Funded</a>, <a href="#fashion-design" class="wiki-link">Deovictori</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="py-1.5 px-2.5 text-left font-bold align-top">Interests</th>
+                            <td class="py-1.5 px-2.5 align-top">
+                                Streetwear design, Web development (HTML/JS/Supabase), Forex & crypto markets, International business
+                            </td>
+                        </tr>
+                        <!-- Custom Fact Row Container -->
+                        <tbody id="infobox-custom-rows"></tbody>
+                    </tbody>
+                </table>
+
+                <!-- Lead Paragraph -->
+                <div id="article-lead" class="space-y-3.5 mb-6 searchable-block">
+                    <p>
+                        <strong>Abel Dagnew</strong> (born November 25, 2009), known online as <strong>@redp1s</strong>, is an Ethiopian student, web developer, streetwear designer, and retail financial trader based in <a href="#early-life" class="wiki-link">Addis Ababa</a>, Ethiopia.<sup class="ref-sup"><a href="#ref-1" class="wiki-link citation-trigger" data-ref="1">[1]</a></sup> He is recognized for building lightweight, dark-mode minimalist web applications—most notably the Grade 12 examination platform <strong>MatricPrep</strong>—as well as founding the independent streetwear concept <strong>Deovictori</strong> and digital trading communities <strong>Wolf Wallet Street</strong> and <strong>Black Funded</strong>.<sup class="ref-sup"><a href="#ref-2" class="wiki-link citation-trigger" data-ref="2">[2]</a></sup>
+                    </p>
+                    <p>
+                        Balancing secondary school studies in the Social Science stream with independent software engineering and financial market analysis, Dagnew represents a generation of young digital builders in East Africa utilizing single-file web architectures, decentralized payment rails, and minimalist brand aesthetics.<sup class="ref-sup"><a href="#ref-3" class="wiki-link citation-trigger" data-ref="3">[3]</a></sup>
+                    </p>
+                </div>
+
+                <!-- Section 1: Early life and education -->
+                <section id="early-life" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-1-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Early life and education</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Early life and education')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-1-body" class="space-y-3">
+                        <p>
+                            <strong>Abel Dagnew</strong> was born on November 25, 2009, in Addis Ababa, Ethiopia, into a wealthy and prominent family with extensive holdings in commercial real estate.<sup class="ref-sup"><a href="#ref-1" class="wiki-link citation-trigger" data-ref="1">[1]</a></sup> His family owns major commercial buildings and landmark properties throughout Ethiopia as well as international real estate assets across multiple countries.<sup class="ref-sup"><a href="#ref-1" class="wiki-link citation-trigger" data-ref="1">[1]</a></sup> Raised in the Ethiopian capital within an entrepreneurial environment, Abel Dagnew developed an early interest in digital design, online commerce, and self-directed technology education alongside his formal schooling.
+                        </p>
+                        <p>
+                            Abel Dagnew attends <strong>Green School</strong> in Addis Ababa, pursuing the <strong>Social Science stream</strong> as part of the Class of 2027.<sup class="ref-sup"><a href="#ref-4" class="wiki-link citation-trigger" data-ref="4">[4]</a></sup> His academic curriculum focuses on economics, geography, history, and mathematics in preparation for the Ethiopian Secondary School Leaving Certificate Examination (ESSLCE / EEUE) in 2027.
+                        </p>
+                        <p>
+                            Beyond his domestic secondary studies, Abel Dagnew has structured an international higher education pathway targeting France for the 2028 academic intake. His academic roadmap includes intensive French language acquisition through a <em>Diplôme Universitaire de Français Langue Étrangère</em> (DU-FLE) program, followed by undergraduate studies toward a <strong>Bachelor of Business Administration (BBA)</strong> in Paris.<sup class="ref-sup"><a href="#ref-4" class="wiki-link citation-trigger" data-ref="4">[4]</a></sup>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 2: Technology and web development -->
+                <section id="tech-dev" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-2-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Technology and web development</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Technology and web development')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-2-body" class="space-y-3">
+                        <p>
+                            As a self-taught web developer, <strong>Abel Dagnew</strong> specializes in high-speed, zero-bloat web applications built primarily with single-file HTML5, modern CSS, vanilla JavaScript, and <a href="#references" class="wiki-link">Supabase</a> cloud backends, deployed via distributed static cloud hosting and custom web servers.<sup class="ref-sup"><a href="#ref-2" class="wiki-link citation-trigger" data-ref="2">[2]</a></sup> His engineering philosophy favors dark-mode minimalism, instant client-side responsiveness, and accessible mobile-first interfaces.
+                        </p>
+
+                        <h3 class="wiki-sub-heading text-[17px] font-bold mt-4 mb-1.5">MatricPrep (2026)</h3>
+                        <p>
+                            In 2026, Abel Dagnew developed <strong>MatricPrep</strong>, an interactive, AI-assisted Grade 12 examination preparation platform tailored for Ethiopian students preparing for national entrance exams.<sup class="ref-sup"><a href="#ref-2" class="wiki-link citation-trigger" data-ref="2">[2]</a></sup> The platform combines curated practice assessments, subject-specific study modules for both Natural and Social Science streams, and automated study guidance within a distraction-free dark interface.
+                        </p>
+
+                        <h3 class="wiki-sub-heading text-[17px] font-bold mt-4 mb-1.5">Web3 &amp; Crypto Payment Interfaces</h3>
+                        <p>
+                            Abel Dagnew has also engineered custom cryptocurrency checkout interfaces designed for digital storefronts and community memberships. These lightweight payment modules integrate wallet verification and transaction tracking across the <strong>Polygon</strong> and <strong>BEP-20 (BNB Smart Chain)</strong> networks, enabling low-fee global digital transactions.<sup class="ref-sup"><a href="#ref-5" class="wiki-link citation-trigger" data-ref="5">[5]</a></sup>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 3: Trading and digital ventures -->
+                <section id="trading-ventures" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-3-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Trading and digital ventures</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Trading and digital ventures')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-3-body" class="space-y-3">
+                        <p>
+                            Alongside software development, <strong>Abel Dagnew</strong> is active in retail foreign exchange (Forex) and proprietary trading firm evaluations.<sup class="ref-sup"><a href="#ref-3" class="wiki-link citation-trigger" data-ref="3">[3]</a></sup> He has studied institutional financial market concepts—including liquidity mechanics, market structure, and risk management—operating across brokerage and prop-firm environments such as <strong>Exness</strong>, <strong>FundedNext</strong>, and <strong>HFM</strong>.<sup class="ref-sup"><a href="#ref-6" class="wiki-link citation-trigger" data-ref="6">[6]</a></sup>
+                        </p>
+                        <p>
+                            In the digital asset sector, he manages cryptocurrency operations across Polygon and BEP-20 ecosystems utilizing custodial and non-custodial tools such as Cwallet. To share market insights and build structured trading communities, Abel Dagnew launched two digital brand initiatives:
+                        </p>
+                        <p>
+                            He attends <strong>Green School</strong> in Addis Ababa, pursuing the <strong>Social Science stream</strong> as part of the Class of 2027.<sup class="ref-sup"><a href="#ref-4" class="wiki-link citation-trigger" data-ref="4">[4]</a></sup> His academic curriculum focuses on economics, geography, history, and mathematics in preparation for the Ethiopian Secondary School Leaving Certificate Examination (ESSLCE / EEUE) in 2027.
+                        </p>
+                        <p>
+                            Beyond his domestic secondary studies, Dagnew has structured an international higher education pathway targeting France for the 2028 academic intake. His academic roadmap includes intensive French language acquisition through a <em>Diplôme Universitaire de Français Langue Étrangère</em> (DU-FLE) program, followed by undergraduate studies toward a <strong>Bachelor of Business Administration (BBA)</strong> in Paris.<sup class="ref-sup"><a href="#ref-4" class="wiki-link citation-trigger" data-ref="4">[4]</a></sup>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 2: Technology and web development -->
+                <section id="tech-dev" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-2-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Technology and web development</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Technology and web development')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-2-body" class="space-y-3">
+                        <p>
+                            As a self-taught web developer, Dagnew specializes in high-speed, zero-bloat web applications built primarily with single-file HTML5, modern CSS, vanilla JavaScript, and <a href="#references" class="wiki-link">Supabase</a> cloud backends, frequently deployed via GitHub Pages.<sup class="ref-sup"><a href="#ref-2" class="wiki-link citation-trigger" data-ref="2">[2]</a></sup> His engineering philosophy favors dark-mode minimalism, instant client-side responsiveness, and accessible mobile-first interfaces.
+                        </p>
+
+                        <h3 class="wiki-sub-heading text-[17px] font-bold mt-4 mb-1.5">MatricPrep (2026)</h3>
+                        <p>
+                            In 2026, Dagnew developed <strong>MatricPrep</strong>, an interactive, AI-assisted Grade 12 examination preparation platform tailored for Ethiopian students preparing for national entrance exams.<sup class="ref-sup"><a href="#ref-2" class="wiki-link citation-trigger" data-ref="2">[2]</a></sup> The platform combines curated practice assessments, subject-specific study modules for both Natural and Social Science streams, and automated study guidance within a distraction-free dark interface.
+                        </p>
+
+                        <h3 class="wiki-sub-heading text-[17px] font-bold mt-4 mb-1.5">Web3 & Crypto Payment Interfaces</h3>
+                        <p>
+                            Dagnew has also engineered custom cryptocurrency checkout interfaces designed for digital storefronts and community memberships. These lightweight payment modules integrate wallet verification and transaction tracking across the <strong>Polygon</strong> and <strong>BEP-20 (BNB Smart Chain)</strong> networks, enabling low-fee global digital transactions.<sup class="ref-sup"><a href="#ref-5" class="wiki-link citation-trigger" data-ref="5">[5]</a></sup>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 3: Trading and digital ventures -->
+                <section id="trading-ventures" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-3-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Trading and digital ventures</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Trading and digital ventures')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-3-body" class="space-y-3">
+                        <p>
+                            Alongside software development, Dagnew is active in retail foreign exchange (Forex) and proprietary trading firm evaluations.<sup class="ref-sup"><a href="#ref-3" class="wiki-link citation-trigger" data-ref="3">[3]</a></sup> He has studied institutional financial market concepts—including liquidity mechanics, market structure, and risk management—operating across brokerage and prop-firm environments such as <strong>Exness</strong>, <strong>FundedNext</strong>, and <strong>HFM</strong>.<sup class="ref-sup"><a href="#ref-6" class="wiki-link citation-trigger" data-ref="6">[6]</a></sup>
+                        </p>
+                        <p>
+                            In the digital asset sector, he manages cryptocurrency operations across Polygon and BEP-20 ecosystems utilizing custodial and non-custodial tools such as Cwallet. To share market insights and build structured trading communities, Dagnew launched two digital brand initiatives:
+                        </p>
+                        <ul class="list-disc pl-6 space-y-1.5">
+                            <li><strong>Wolf Wallet Street</strong> – A digital trading brand and community centered on retail market analysis, disciplined risk frameworks, and financial literacy.<sup class="ref-sup"><a href="#ref-3" class="wiki-link citation-trigger" data-ref="3">[3]</a></sup></li>
+                            <li><strong>Black Funded</strong> – A proprietary trading-focused initiative highlighting funded account strategies, evaluation discipline, and modern digital asset management.<span class="inline-block text-[11px] text-[var(--text-muted)] ml-1">[<button onclick="showToast('Citation verification requested by Wikibidia editors.')" class="wiki-link italic">citation needed</button>]</span></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Section 4: Fashion, design, and aesthetics -->
+                <section id="fashion-design" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-4-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>Fashion, design, and aesthetics</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[<button onclick="openEditSection('Fashion, design, and aesthetics')" class="wiki-link">edit</button>]</span>
+                    </div>
+                    <div id="sec-4-body" class="space-y-3">
+                        <p>
+                            <strong>Abel Dagnew</strong> is the founder and creative director of <strong>Deovictori</strong>, an independent streetwear concept defined by dark-mode minimalism, monochrome palettes, metallic and chrome typography, and symmetrical leetspeak branding exemplified by his handle <code>@redp1s</code>.<sup class="ref-sup"><a href="#ref-7" class="wiki-link citation-trigger" data-ref="7">[7]</a></sup>
+                        </p>
+                        <p>
+                            His visual direction merges high-contrast gothic and industrial motifs with contemporary digital minimalism. Creative influences cited in his design language include avant-garde luxury and underground streetwear aesthetics (such as <strong>Chrome Hearts</strong> and <strong>Esdeekid</strong>) alongside modern hip-hop culture, notably artists like <strong>Playboi Carti</strong> and <strong>NBA YoungBoy</strong>.<sup class="ref-sup"><a href="#ref-7" class="wiki-link citation-trigger" data-ref="7">[7]</a></sup>
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Dynamic User-Added Sections Container -->
+                <div id="custom-sections-container"></div>
+
+                <!-- Section 5: References & External Links -->
+                <section id="references" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('sec-5-body', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none" title="Collapse/Expand section">?</button>
+                            <span>References</span>
+                        </h2>
+                    </div>
+                    <div id="sec-5-body">
+                        <ol class="list-decimal pl-6 text-xs text-[var(--text-muted)] space-y-1.5 columns-1 md:columns-2 gap-6">
+                            <li id="ref-1" class="break-inside-avoid">^ "Biographical &amp; Family Enterprise Registry: Abel Dagnew (@redp1s)". <em>Addis Ababa Commercial &amp; Digital Archive</em>. Retrieved November 23, 2026.</li>
+                            <li id="ref-2" class="break-inside-avoid">^ "MatricPrep &amp; Single-File Web Engineering in Ethiopia". <em>Cloud Web Architecture Showcase</em>. 2026.</li>
+                            <li id="ref-3" class="break-inside-avoid">^ "Young Retail Traders &amp; Digital Brands in East Africa". <em>Wolf Wallet Street Chronicles</em>. 2026.</li>
+                            <li id="ref-4" class="break-inside-avoid">^ "Green School Addis Ababa – Social Science Cohort (Class of 2027) & International Pathways". <em>Academic Records</em>.</li>
+                            <li id="ref-5" class="break-inside-avoid">^ "Lightweight Polygon & BEP-20 Checkout Architectures". <em>Web3 Frontend Review</em>. 2026.</li>
+                            <li id="ref-6" class="break-inside-avoid">^ "Proprietary Trading Evaluation Frameworks: Exness, FundedNext & HFM". <em>Retail Market Notes</em>.</li>
+                            <li id="ref-7" class="break-inside-avoid">^ "Deovictori Lookbook & Chrome Typography Manifesto". <em>@redp1s Design Archive</em>. 2026.</li>
+                        </ol>
+
+                        <h3 class="wiki-heading text-[18px] font-normal mt-6 mb-2.5 pb-1">External links</h3>
+                        <ul class="list-disc pl-6 text-sm space-y-1">
+                            <li><span class="font-mono text-xs px-1.5 py-0.5 rounded wiki-bg-subtle border wiki-border-subtle">@redp1s</span> — Official digital handle & creative portfolio</li>
+                            <li><a href="#tech-dev" class="wiki-link">MatricPrep</a> — Grade 12 Ethiopian National Exam Preparation Platform</li>
+                            <li><a href="#fashion-design" class="wiki-link">Deovictori</a> — Streetwear & Dark-Mode Minimalist Design Concept</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Authentic Wikipedia Categories Box -->
+                <div class="mt-8 p-3 border wiki-border wiki-bg-subtle rounded-xs text-xs flex flex-wrap items-center gap-y-1.5">
+                    <span class="font-semibold mr-2 text-[var(--text-primary)]">Categories:</span>
+                    <a href="#early-life" class="wiki-link pr-2 mr-2 border-r wiki-border">2009 births</a>
+                    <a href="#top" class="wiki-link pr-2 mr-2 border-r wiki-border">Living people</a>
+                    <a href="#early-life" class="wiki-link pr-2 mr-2 border-r wiki-border">People from Addis Ababa</a>
+                    <a href="#tech-dev" class="wiki-link pr-2 mr-2 border-r wiki-border">Ethiopian web developers</a>
+                    <a href="#fashion-design" class="wiki-link pr-2 mr-2 border-r wiki-border">Streetwear designers</a>
+                    <a href="#trading-ventures" class="wiki-link">Retail financial traders</a>
+                </div>
+
+            </div>
+
+            <!-- TALK PAGE VIEW (Hidden by default) -->
+            <div id="talk-view" class="hidden space-y-4">
+                <div class="p-4 border wiki-border wiki-bg-subtle rounded-xs text-xs space-y-2">
+                    <div class="font-bold text-sm">Talk:Abel Dagnew</div>
+                    <p>This is the talk page for discussing improvements to the <strong>Abel Dagnew (@redp1s)</strong> article. You can add new notes or facts using the <strong>Edit</strong> tab above.</p>
+                </div>
+                <div class="border-b wiki-border pb-3">
+                    <h3 class="font-serif text-lg mb-1">Notability & Projects (2026)</h3>
+                    <p class="text-sm">Updated the Technology section to reflect the 2026 release of <strong>MatricPrep</strong> and Polygon/BEP-20 checkout systems, as well as the 2027 ESSLCE and 2028 Paris BBA academic timeline. — <span class="wiki-link font-mono text-xs">@redp1s</span> (talk) 14:21, 23 November 2026 (EAT)</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Authentic Wikipedia Footer -->
+    <footer class="border-t wiki-border-subtle mt-12 py-6 px-4 sm:px-6 text-xs text-[var(--text-muted)] wiki-bg-subtle">
+        <div class="max-w-[1440px] mx-auto space-y-3">
+            <p>This page was last edited on 23 November 2026, at 14:21 (EAT).</p>
+            <p>Text is available under the <span class="wiki-link">Creative Commons Attribution-ShareAlike 4.0 License</span>; additional terms may apply. Wikibidia® is a tribute encyclopedia dedicated to <strong>Abel Dagnew (@redp1s)</strong>.</p>
+            <div class="flex flex-wrap gap-4 pt-1">
+                <a href="#top" class="wiki-link">Privacy policy</a>
+                <a href="#top" class="wiki-link">About Wikibidia</a>
+                <a href="#top" class="wiki-link">Disclaimers</a>
+                <button onclick="resetCustomEdits()" class="wiki-link text-left">Reset custom edits</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Citation Hover Tooltip Popover -->
+    <div id="citation-tooltip" class="hidden fixed z-50 max-w-xs p-3 rounded border wiki-border bg-[var(--bg-page)] shadow-xl text-xs pointer-events-none transition-opacity duration-150">
+        <div class="font-bold text-[11px] uppercase tracking-wider text-[var(--text-muted)] mb-1">Reference</div>
+        <div id="citation-tooltip-text" class="leading-relaxed"></div>
+    </div>
+
+    <!-- Toast Notification Banner (No alert() ever used) -->
+    <div id="wiki-toast" class="fixed bottom-5 right-5 z-50 hidden max-w-sm px-4 py-2.5 rounded border wiki-border bg-[var(--bg-page)] shadow-lg text-xs font-medium flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#3366cc]"></span>
+        <span id="wiki-toast-msg"></span>
+    </div>
+
+    <!-- Live "Edit Article" Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div id="edit-modal-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs"></div>
+        <div class="relative z-10 w-full max-w-xl rounded border wiki-border bg-[var(--bg-page)] shadow-2xl overflow-hidden">
+            <div class="wiki-infobox-header px-5 py-3 border-b wiki-border-subtle flex items-center justify-between">
+                <h3 class="font-serif text-lg font-bold">Editing: Abel Dagnew</h3>
+                <button id="close-edit-modal" class="p-1 rounded hover:bg-[var(--bg-hover)] text-sm">?</button>
+            </div>
+            
+            <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-sm">
+                <p class="text-xs text-[var(--text-muted)]">
+                    Add a new encyclopedic section or custom Infobox fact live in your browser. Changes are saved locally so your personalized Wikibidia page persists.
+                </p>
+
+                <!-- Option 1: Add New Infobox Row -->
+                <div class="p-3.5 rounded border wiki-border-subtle wiki-bg-subtle space-y-2.5">
+                    <div class="font-semibold text-xs uppercase tracking-wider text-[var(--text-muted)]">1. Add Infobox Fact</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input id="custom-info-label" type="text" placeholder="Label (e.g., Languages)" class="px-3 py-1.5 text-xs rounded border wiki-border bg-[var(--bg-page)] focus:outline-none focus:ring-1 focus:ring-[#3366cc]">
+                        <input id="custom-info-value" type="text" placeholder="Value (e.g., Amharic, English, French)" class="px-3 py-1.5 text-xs rounded border wiki-border bg-[var(--bg-page)] focus:outline-none focus:ring-1 focus:ring-[#3366cc]">
+                    </div>
+                    <button id="add-info-btn" class="px-3 py-1.5 rounded bg-[#3366cc] hover:bg-[#2a54a8] text-white text-xs font-medium transition-colors">
+                        + Add to Infobox
+                    </button>
+                </div>
+
+                <!-- Option 2: Add New Article Section -->
+                <div class="p-3.5 rounded border wiki-border-subtle wiki-bg-subtle space-y-2.5">
+                    <div class="font-semibold text-xs uppercase tracking-wider text-[var(--text-muted)]">2. Add New Article Section</div>
+                    <input id="custom-sec-title" type="text" placeholder="Section Heading (e.g., Philosophy & Future Vision)" class="w-full px-3 py-1.5 text-xs rounded border wiki-border bg-[var(--bg-page)] focus:outline-none focus:ring-1 focus:ring-[#3366cc]">
+                    <textarea id="custom-sec-content" rows="4" placeholder="Write encyclopedic content in third-person neutral tone..." class="w-full px-3 py-2 text-xs rounded border wiki-border bg-[var(--bg-page)] focus:outline-none focus:ring-1 focus:ring-[#3366cc]"></textarea>
+                    <button id="add-sec-btn" class="px-3 py-1.5 rounded bg-[#3366cc] hover:bg-[#2a54a8] text-white text-xs font-medium transition-colors">
+                        Publish Section to Article
+                    </button>
+                </div>
+            </div>
+
+            <div class="px-5 py-3 border-t wiki-border-subtle wiki-bg-subtle flex justify-end">
+                <button id="done-edit-btn" class="px-4 py-1.5 rounded border wiki-border bg-[var(--bg-page)] hover:bg-[var(--bg-hover)] text-xs font-medium">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Calculate Exact Age from November 25, 2009 ---
+        function updateDynamicAge() {
+            const birthDate = new Date(2009, 10, 25); // Month is 0-indexed (10 = November)
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            const infoboxAge = document.getElementById('infobox-age');
+            const headerPill = document.getElementById('live-age-pill');
+            if (infoboxAge) infoboxAge.textContent = `(age ${age})`;
+            if (headerPill) headerPill.textContent = `Age ${age}`;
+        }
+        updateDynamicAge();
+
+        // --- 2. Classic Light Mode / Dark Mode Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+
+        function applyTheme(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeIcon.textContent = '??';
+                themeLabel.textContent = 'Light Mode';
+                localStorage.setItem('wikibidia_theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.textContent = '??';
+                themeLabel.textContent = 'Dark Mode';
+                localStorage.setItem('wikibidia_theme', 'light');
+            }
+        }
+
+        // Default to crisp Wikipedia Light Mode, or restore saved preference
+        const savedTheme = localStorage.getItem('wikibidia_theme');
+        if (savedTheme === 'dark') {
+            applyTheme(true);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isCurrentlyDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isCurrentlyDark);
+        });
+
+        // --- 3. Font Size Appearance Switcher ---
+        function setFontSize(size) {
+            document.body.style.fontSize = size;
+            showToast(`Article text size set to ${size}`);
+        }
+
+        // --- 4. Collapsible Sections ---
+        function toggleSection(bodyId, btn) {
+            const el = document.getElementById(bodyId);
+            if (!el) return;
+            const isHidden = el.classList.toggle('hidden');
+            btn.textContent = isHidden ? '?' : '?';
+        }
+
+        // Desktop TOC Hide/Show Toggle
+        const tocCollapseBtn = document.getElementById('toc-collapse-all');
+        const desktopTocList = document.getElementById('desktop-toc-list');
+        tocCollapseBtn.addEventListener('click', () => {
+            const hidden = desktopTocList.classList.toggle('hidden');
+            tocCollapseBtn.textContent = hidden ? 'show' : 'hide';
+        });
+
+        // Mobile Drawer Handling
+        const mobileTocBtn = document.getElementById('mobile-toc-btn');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const closeMobileDrawer = document.getElementById('close-mobile-drawer');
+        const mobileDrawerBackdrop = document.getElementById('mobile-drawer-backdrop');
+        const mobileTocList = document.getElementById('mobile-toc-list');
+
+        function syncMobileToc() {
+            mobileTocList.innerHTML = desktopTocList.innerHTML;
+            mobileTocList.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileDrawer.classList.add('hidden');
+                });
+            });
+        }
+        syncMobileToc();
+
+        mobileTocBtn.addEventListener('click', () => mobileDrawer.classList.remove('hidden'));
+        closeMobileDrawer.addEventListener('click', () => mobileDrawer.classList.add('hidden'));
+        mobileDrawerBackdrop.addEventListener('click', () => mobileDrawer.classList.add('hidden'));
+
+        // --- 5. Interactive Search Across Page Sections ---
+        const searchInput = document.getElementById('wiki-search');
+        const searchResults = document.getElementById('search-results');
+        const clearSearchBtn = document.getElementById('clear-search');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (!query) {
+                searchResults.classList.add('hidden');
+                clearSearchBtn.classList.add('hidden');
+                return;
+            }
+            clearSearchBtn.classList.remove('hidden');
+
+            const blocks = document.querySelectorAll('.searchable-block');
+            const matches = [];
+
+            blocks.forEach((block, idx) => {
+                const headingEl = block.querySelector('h2');
+                const title = headingEl ? headingEl.innerText.replace(/[??]/g, '').trim() : 'Lead Summary';
+                const sectionId = block.id || 'top';
+                const text = block.innerText;
+
+                if (text.toLowerCase().includes(query)) {
+                    const pos = text.toLowerCase().indexOf(query);
+                    const start = Math.max(0, pos - 35);
+                    const end = Math.min(text.length, pos + query.length + 55);
+                    let snippet = (start > 0 ? '...' : '') + text.slice(start, end) + (end < text.length ? '...' : '');
+                    matches.push({ title, sectionId, snippet });
+                }
+            });
+
+            if (matches.length === 0) {
+                searchResults.innerHTML = `<div class="p-3 text-[var(--text-muted)]">No matching sections found for "<strong>${escapeHtml(query)}</strong>".</div>`;
+            } else {
+                searchResults.innerHTML = matches.map(m => `
+                    <a href="#${m.sectionId}" class="block p-2.5 border-b wiki-border-subtle hover:bg-[var(--bg-hover)] transition-colors">
+                        <div class="font-bold text-[var(--link-color)]">${escapeHtml(m.title)}</div>
+                        <div class="text-[11px] text-[var(--text-muted)] mt-0.5 line-clamp-2">${escapeHtml(m.snippet)}</div>
+                    </a>
+                `).join('');
+            }
+            searchResults.classList.remove('hidden');
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchResults.classList.add('hidden');
+            clearSearchBtn.classList.add('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        // --- 6. Citation Hover Tooltips ---
+        const tooltip = document.getElementById('citation-tooltip');
+        const tooltipText = document.getElementById('citation-tooltip-text');
+
+        document.querySelectorAll('.citation-trigger').forEach(trigger => {
+            trigger.addEventListener('mouseenter', (e) => {
+                const refNum = trigger.getAttribute('data-ref');
+                const refLi = document.getElementById(`ref-${refNum}`);
+                if (!refLi) return;
+                tooltipText.textContent = refLi.textContent.replace(/^\^\s*/, '');
+                tooltip.classList.remove('hidden');
+                positionTooltip(e);
+            });
+
+            trigger.addEventListener('mousemove', positionTooltip);
+
+            trigger.addEventListener('mouseleave', () => {
+                tooltip.classList.add('hidden');
+            });
+        });
+
+        function positionTooltip(e) {
+            const pad = 14;
+            let left = e.clientX + pad;
+            let top = e.clientY + pad;
+            if (left + 300 > window.innerWidth) left = e.clientX - 310;
+            if (top + 110 > window.innerHeight) top = e.clientY - 100;
+            tooltip.style.left = `${Math.max(10, left)}px`;
+            tooltip.style.top = `${Math.max(10, top)}px`;
+        }
+
+        // --- 7. Article / Talk Tab Switcher ---
+        function switchTab(tab) {
+            const articleView = document.getElementById('article-view');
+            const talkView = document.getElementById('talk-view');
+            const tabArticle = document.getElementById('tab-article');
+            const tabTalk = document.getElementById('tab-talk');
+
+            if (tab === 'talk') {
+                articleView.classList.add('hidden');
+                talkView.classList.remove('hidden');
+                tabTalk.classList.add('font-semibold', 'border-b-2', 'border-[#3366cc]', 'text-[var(--text-primary)]');
+                tabTalk.classList.remove('wiki-link');
+                tabArticle.classList.remove('font-semibold', 'border-b-2', 'border-[#3366cc]', 'text-[var(--text-primary)]');
+                tabArticle.classList.add('wiki-link');
+            } else {
+                talkView.classList.add('hidden');
+                articleView.classList.remove('hidden');
+                tabArticle.classList.add('font-semibold', 'border-b-2', 'border-[#3366cc]', 'text-[var(--text-primary)]');
+                tabArticle.classList.remove('wiki-link');
+                tabTalk.classList.remove('font-semibold', 'border-b-2', 'border-[#3366cc]', 'text-[var(--text-primary)]');
+                tabTalk.classList.add('wiki-link');
+            }
+        }
+
+        // --- 8. Live Edit Mode & LocalStorage Persistence ---
+        const editModal = document.getElementById('edit-modal');
+        const openEditModalBtn = document.getElementById('open-edit-modal');
+        const closeEditModalBtn = document.getElementById('close-edit-modal');
+        const doneEditBtn = document.getElementById('done-edit-btn');
+        const editModalBackdrop = document.getElementById('edit-modal-backdrop');
+
+        function openEditSection(sectionHint) {
+            editModal.classList.remove('hidden');
+            editModal.classList.add('flex');
+            if (sectionHint) {
+                document.getElementById('custom-sec-title').value = `${sectionHint} (Extended Notes)`;
+            }
+        }
+
+        openEditModalBtn.addEventListener('click', () => openEditSection(''));
+        [closeEditModalBtn, doneEditBtn, editModalBackdrop].forEach(el => {
+            el.addEventListener('click', () => {
+                editModal.classList.add('hidden');
+                editModal.classList.remove('flex');
+            });
+        });
+
+        // Save & Render Custom Infobox Rows & Sections
+        function loadCustomData() {
+            const customInfo = JSON.parse(localStorage.getItem('wikibidia_custom_info') || '[]');
+            const customSecs = JSON.parse(localStorage.getItem('wikibidia_custom_secs') || '[]');
+
+            const infoContainer = document.getElementById('infobox-custom-rows');
+            infoContainer.innerHTML = customInfo.map(item => `
+                <tr class="border-t wiki-border-subtle">
+                    <th class="py-1.5 px-2.5 text-left font-bold align-top">${escapeHtml(item.label)}</th>
+                    <td class="py-1.5 px-2.5 align-top">${escapeHtml(item.value)}</td>
+                </tr>
+            `).join('');
+
+            const secContainer = document.getElementById('custom-sections-container');
+            secContainer.innerHTML = customSecs.map((sec, i) => `
+                <section id="custom-sec-${i}" class="mb-6 searchable-block">
+                    <div class="wiki-heading flex items-center justify-between pb-1 mb-3">
+                        <h2 class="text-[22px] font-normal flex items-center gap-2">
+                            <button onclick="toggleSection('custom-body-${i}', this)" class="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] select-none">?</button>
+                            <span>${escapeHtml(sec.title)}</span>
+                        </h2>
+                        <span class="text-xs font-sans text-[var(--text-muted)]">[user added]</span>
+                    </div>
+                    <div id="custom-body-${i}" class="space-y-3">
+                        <p>${escapeHtml(sec.content)}</p>
+                    </div>
+                </section>
+            `).join('');
+
+            // Update TOC with any custom sections
+            document.querySelectorAll('.custom-toc-item').forEach(el => el.remove());
+            const refLink = desktopTocList.querySelector('a[href="#references"]');
+            customSecs.forEach((sec, i) => {
+                const a = document.createElement('a');
+                a.href = `#custom-sec-${i}`;
+                a.className = 'block py-0.5 wiki-link custom-toc-item';
+                a.textContent = `4.${i + 1} ${sec.title}`;
+                desktopTocList.insertBefore(a, refLink);
+            });
+            syncMobileToc();
+        }
+
+        document.getElementById('add-info-btn').addEventListener('click', () => {
+            const label = document.getElementById('custom-info-label').value.trim();
+            const value = document.getElementById('custom-info-value').value.trim();
+            if (!label || !value) {
+                showToast('Please enter both a label and a value.');
+                return;
+            }
+            const customInfo = JSON.parse(localStorage.getItem('wikibidia_custom_info') || '[]');
+            customInfo.push({ label, value });
+            localStorage.setItem('wikibidia_custom_info', JSON.stringify(customInfo));
+            document.getElementById('custom-info-label').value = '';
+            document.getElementById('custom-info-value').value = '';
+            loadCustomData();
+            showToast(`Added "${label}" to Infobox.`);
+        });
+
+        document.getElementById('add-sec-btn').addEventListener('click', () => {
+            const title = document.getElementById('custom-sec-title').value.trim();
+            const content = document.getElementById('custom-sec-content').value.trim();
+            if (!title || !content) {
+                showToast('Please enter a section title and content.');
+                return;
+            }
+            const customSecs = JSON.parse(localStorage.getItem('wikibidia_custom_secs') || '[]');
+            customSecs.push({ title, content });
+            localStorage.setItem('wikibidia_custom_secs', JSON.stringify(customSecs));
+            document.getElementById('custom-sec-title').value = '';
+            document.getElementById('custom-sec-content').value = '';
+            loadCustomData();
+            showToast(`Published section "${title}".`);
+        });
+
+        function resetCustomEdits() {
+            localStorage.removeItem('wikibidia_custom_info');
+            localStorage.removeItem('wikibidia_custom_secs');
+            loadCustomData();
+            showToast('Custom edits reset to original Wikibidia revision.');
+        }
+
+        loadCustomData();
+
+        // --- 9. Utility: Toast & HTML Escaping ---
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('wiki-toast');
+            const toastMsg = document.getElementById('wiki-toast-msg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3200);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[m]);
+        }
+    </script>
+</body>
+</html>
